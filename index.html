@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>つばさ商会 Salesforce デモ画面</title>
+<style>
+:root{
+  --brand:#0176d3; --brand-dark:#014486; --brand-50:#eaf4fb;
+  --bg:#f3f3f3; --card:#ffffff; --border:#dddbda; --border-light:#f3f2f2;
+  --text:#181818; --text-2:#3e3e3c; --text-mute:#706e6b;
+  --success:#2e844a; --success-bg:#cdefc4; --warn:#fe9339; --warn-bg:#fef0e6;
+  --error:#ba0517; --error-bg:#fdd9d4; --info:#0176d3;
+  --shadow-card:0 2px 2px rgba(0,0,0,.05),0 0 0 1px rgba(0,0,0,.06);
+  --shadow-hover:0 2px 4px rgba(0,0,0,.1),0 0 0 1px rgba(0,0,0,.08);
+  --radius:.25rem;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:"Salesforce Sans","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",sans-serif;
+  font-size:13px; color:var(--text); background:var(--bg);
+  -webkit-font-smoothing:antialiased;
+}
+button{font-family:inherit; cursor:pointer}
+a{color:var(--brand); text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* ===== Global Header ===== */
+.global-header{
+  background:linear-gradient(0deg,#032e61,#0176d3); height:48px;
+  display:flex; align-items:center; padding:0 16px; gap:12px;
+  position:sticky; top:0; z-index:1000;
+}
+.app-launcher{
+  width:28px;height:28px;display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.1); border-radius:3px; cursor:pointer;
+}
+.app-launcher:hover{background:rgba(255,255,255,.2)}
+.app-launcher::before{
+  content:""; width:14px;height:14px;
+  background-image:
+    radial-gradient(circle, #fff 1.2px, transparent 1.4px),
+    radial-gradient(circle, #fff 1.2px, transparent 1.4px),
+    radial-gradient(circle, #fff 1.2px, transparent 1.4px),
+    radial-gradient(circle, #fff 1.2px, transparent 1.4px),
+    radial-gradient(circle, #fff 1.2px, transparent 1.4px),
+    radial-gradient(circle, #fff 1.2px, transparent 1.4px),
+    radial-gradient(circle, #fff 1.2px, transparent 1.4px),
+    radial-gradient(circle, #fff 1.2px, transparent 1.4px),
+    radial-gradient(circle, #fff 1.2px, transparent 1.4px);
+  background-size:5px 5px;
+  background-position:0 0,5px 0,10px 0,0 5px,5px 5px,10px 5px,0 10px,5px 10px,10px 10px;
+  background-repeat:no-repeat;
+}
+.app-name{
+  color:#fff; font-weight:700; font-size:14px;
+  padding-left:12px; border-left:1px solid rgba(255,255,255,.3);
+}
+.app-name .sub{font-weight:400; opacity:.8; margin-left:6px; font-size:12px}
+.gh-spacer{flex:1}
+.gh-search{
+  background:rgba(255,255,255,.95); border-radius:3px; padding:6px 12px;
+  width:380px; display:flex; align-items:center; gap:8px; font-size:13px;
+}
+.gh-search input{border:0;outline:0;flex:1;background:transparent;font-size:13px}
+.gh-actions{display:flex; gap:8px; align-items:center}
+.gh-actions .icon-btn{
+  width:32px;height:32px;display:flex;align-items:center;justify-content:center;
+  color:#fff; cursor:pointer; border-radius:50%;
+}
+.gh-actions .icon-btn:hover{background:rgba(255,255,255,.15)}
+.gh-user{
+  width:32px;height:32px;border-radius:50%;
+  background:#f7c6a0;color:#5f3013;display:flex;align-items:center;justify-content:center;
+  font-weight:700; cursor:pointer; font-size:12px;
+}
+
+/* ===== App Bar (Tabs) ===== */
+.app-bar{
+  background:#fff; border-bottom:1px solid var(--border);
+  display:flex; align-items:stretch; padding:0 16px; height:40px;
+  position:sticky; top:48px; z-index:999;
+}
+.app-bar .tab{
+  padding:0 16px; display:flex; align-items:center; gap:6px; cursor:pointer;
+  border-bottom:3px solid transparent; color:var(--text-2); font-weight:400;
+  font-size:13px; user-select:none;
+}
+.app-bar .tab:hover{background:var(--brand-50)}
+.app-bar .tab.active{border-bottom-color:var(--brand); color:var(--brand); font-weight:700}
+
+/* ===== Main content ===== */
+.main{padding:12px 16px; max-width:1440px; margin:0 auto}
+.page{display:none}
+.page.active{display:block}
+
+/* ===== Object Page Header ===== */
+.obj-header{
+  background:#fff; padding:12px 16px; border:1px solid var(--border); border-radius:var(--radius);
+  margin-bottom:8px;
+}
+.obj-header .row1{display:flex; align-items:center; gap:12px}
+.obj-icon{
+  width:40px;height:40px;border-radius:4px;display:flex;align-items:center;justify-content:center;
+  color:#fff; font-size:18px; font-weight:700;
+}
+.obj-icon.account{background:#ff9a3c}
+.obj-icon.lead{background:#f88962}
+.obj-icon.opp{background:#fcb95b}
+.obj-icon.invoice{background:#2e844a}
+.obj-icon.bank{background:#4bc076}
+.obj-icon.report{background:#76ded9}
+.obj-icon.dashboard{background:#e6437f}
+.obj-icon.home{background:#0176d3}
+.obj-title{flex:1}
+.obj-title .label{color:var(--text-mute); font-size:12px}
+.obj-title .name{font-size:18px; font-weight:700}
+.obj-actions{display:flex; gap:6px}
+
+/* ===== Buttons ===== */
+.btn{
+  padding:6px 14px; border:1px solid var(--border); background:#fff;
+  border-radius:var(--radius); font-size:13px; color:var(--text);
+}
+.btn:hover{background:var(--border-light)}
+.btn.primary{background:var(--brand); color:#fff; border-color:var(--brand)}
+.btn.primary:hover{background:var(--brand-dark)}
+.btn.success{background:var(--success); color:#fff; border-color:var(--success)}
+.btn.success:hover{filter:brightness(0.95)}
+.btn.small{padding:3px 10px; font-size:12px}
+
+/* ===== Highlights Panel ===== */
+.highlights{
+  background:#fff; border:1px solid var(--border); border-radius:var(--radius);
+  padding:12px 16px; display:flex; gap:32px; margin-bottom:8px; flex-wrap:wrap;
+}
+.highlights .item{min-width:120px}
+.highlights .lbl{color:var(--text-mute); font-size:12px}
+.highlights .val{font-size:15px; font-weight:700; margin-top:2px}
+
+/* ===== Path Component (Sales Path) ===== */
+.path{
+  background:#fff; border:1px solid var(--border); border-radius:var(--radius);
+  margin-bottom:8px; display:flex; padding:0;
+  overflow:hidden;
+}
+.path .stage{
+  flex:1; padding:10px 0; text-align:center; position:relative;
+  background:#ecebea; color:var(--text-2); font-size:12px; cursor:pointer;
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%, 14px 50%);
+  margin-right:-12px; min-width:0;
+}
+.path .stage:first-child{ clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%) }
+.path .stage:last-child{
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 14px 50%); margin-right:0;
+}
+.path .stage.completed{background:#4bc076; color:#fff}
+.path .stage.current{background:var(--brand); color:#fff; font-weight:700}
+.path .stage:hover{filter:brightness(0.95)}
+
+/* ===== Tabs (within page) ===== */
+.tabs{display:flex; border-bottom:1px solid var(--border); background:#fff; padding:0 16px}
+.tabs .tab2{
+  padding:10px 16px; color:var(--text-mute); border-bottom:3px solid transparent;
+  cursor:pointer; user-select:none; font-size:13px;
+}
+.tabs .tab2.active{color:var(--brand); border-bottom-color:var(--brand); font-weight:700}
+
+/* ===== Two-column layout ===== */
+.two-col{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+.two-col-3{display:grid; grid-template-columns:2fr 1fr; gap:8px}
+@media(max-width:1000px){ .two-col,.two-col-3{grid-template-columns:1fr} }
+
+/* ===== Card ===== */
+.card{
+  background:#fff; border:1px solid var(--border); border-radius:var(--radius);
+  margin-bottom:8px;
+}
+.card .card-head{
+  padding:8px 16px; border-bottom:1px solid var(--border-light);
+  display:flex; align-items:center; gap:8px; font-weight:700;
+}
+.card .card-head .actions{margin-left:auto; display:flex; gap:6px}
+.card .card-body{padding:12px 16px}
+
+/* ===== Field rows ===== */
+.field-grid{display:grid; grid-template-columns:1fr 1fr; gap:0 24px}
+.field{padding:8px 0; border-bottom:1px solid var(--border-light)}
+.field .lbl{color:var(--text-mute); font-size:12px; margin-bottom:2px}
+.field .val{font-size:13px}
+.field.full{grid-column:1/-1}
+
+/* ===== Table ===== */
+.tbl{width:100%; border-collapse:collapse; background:#fff; font-size:13px}
+.tbl th{
+  background:#fafaf9; text-align:left; padding:8px 12px;
+  border-bottom:1px solid var(--border); font-weight:700; color:var(--text-2);
+  font-size:12px;
+}
+.tbl td{padding:8px 12px; border-bottom:1px solid var(--border-light)}
+.tbl tr:hover td{background:#fafaf9}
+.tbl .name-link{color:var(--brand); cursor:pointer}
+.tbl .name-link:hover{text-decoration:underline}
+.tbl .num{text-align:right; font-variant-numeric:tabular-nums}
+
+/* ===== Badges ===== */
+.badge{
+  display:inline-block; padding:2px 8px; font-size:11px; font-weight:700;
+  border-radius:10px; line-height:1.4;
+}
+.badge.success{background:var(--success-bg); color:var(--success)}
+.badge.warn{background:var(--warn-bg); color:#7d4400}
+.badge.error{background:var(--error-bg); color:var(--error)}
+.badge.info{background:var(--brand-50); color:var(--brand)}
+.badge.gray{background:#ecebea; color:var(--text-2)}
+
+/* ===== Toast ===== */
+.toast{
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  background:#2e844a; color:#fff; padding:10px 20px; border-radius:4px;
+  box-shadow:0 6px 20px rgba(0,0,0,.2); z-index:5000; font-weight:700;
+  display:none;
+}
+.toast.show{display:block; animation:fadeIn .2s}
+@keyframes fadeIn{from{opacity:0; transform:translate(-50%,10px)} to{opacity:1; transform:translate(-50%,0)}}
+
+/* ===== Modal ===== */
+.modal-mask{
+  position:fixed; inset:0; background:rgba(8,28,57,.5);
+  display:none; align-items:center; justify-content:center; z-index:4000;
+}
+.modal-mask.show{display:flex}
+.modal{
+  background:#fff; border-radius:6px; width:760px; max-width:96vw; max-height:92vh; overflow:auto;
+  box-shadow:0 8px 32px rgba(0,0,0,.3);
+}
+.modal-head{
+  padding:16px; background:#fafaf9; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:10px;
+}
+.modal-head h2{margin:0; font-size:16px}
+.modal-head .close{margin-left:auto; cursor:pointer; color:var(--text-mute); font-size:18px}
+.modal-body{padding:16px}
+.modal-foot{padding:12px 16px; border-top:1px solid var(--border); background:#fafaf9; display:flex; justify-content:flex-end; gap:8px}
+
+/* ===== Form ===== */
+.form-row{display:flex; flex-direction:column; gap:4px; margin-bottom:12px}
+.form-row label{font-size:12px; color:var(--text-2); font-weight:700}
+.form-row label .req{color:var(--error); margin-left:2px}
+.form-row input, .form-row select, .form-row textarea{
+  padding:6px 10px; border:1px solid var(--border); border-radius:3px;
+  font-size:13px; font-family:inherit;
+}
+.form-row input:focus, .form-row select:focus, .form-row textarea:focus{
+  outline:0; border-color:var(--brand); box-shadow:0 0 3px var(--brand);
+}
+.form-2col{display:grid; grid-template-columns:1fr 1fr; gap:0 16px}
+
+/* ===== Dashboard ===== */
+.dash-grid{display:grid; grid-template-columns:repeat(12,1fr); gap:8px}
+.widget{background:#fff; border:1px solid var(--border); border-radius:var(--radius); padding:12px}
+.widget.span-3{grid-column:span 3}
+.widget.span-4{grid-column:span 4}
+.widget.span-6{grid-column:span 6}
+.widget.span-12{grid-column:span 12}
+.widget .w-title{font-size:12px; color:var(--text-mute); font-weight:700; margin-bottom:6px}
+.widget .w-big{font-size:28px; font-weight:700; color:var(--text)}
+.widget .w-sub{font-size:11px; color:var(--text-mute); margin-top:2px}
+.widget .w-sub.up{color:var(--success)} .widget .w-sub.down{color:var(--error)}
+
+/* ===== Chart bars (CSS) ===== */
+.bar-chart{display:flex; align-items:end; height:180px; gap:8px; padding:8px 4px 4px}
+.bar-chart .bar{flex:1; background:linear-gradient(0deg,#0176d3,#4faae8); border-radius:3px 3px 0 0; position:relative; min-width:0}
+.bar-chart .bar .v{position:absolute; top:-18px; left:50%; transform:translateX(-50%); font-size:10px; color:var(--text-2); white-space:nowrap}
+.bar-chart .bar .x{position:absolute; bottom:-16px; left:50%; transform:translateX(-50%); font-size:10px; color:var(--text-mute); white-space:nowrap}
+.bar-chart-wrap{padding:6px 4px 24px}
+
+.donut-wrap{display:flex; align-items:center; gap:16px; padding:12px 0}
+.donut{width:140px; height:140px; border-radius:50%; flex-shrink:0}
+.legend{flex:1; font-size:12px}
+.legend .lg-item{display:flex; align-items:center; gap:6px; padding:3px 0}
+.legend .lg-dot{width:10px; height:10px; border-radius:2px}
+
+.kpi-row{display:flex; gap:16px; padding:8px 0}
+.kpi-row .kpi{flex:1; padding:8px; border-right:1px solid var(--border-light)}
+.kpi-row .kpi:last-child{border-right:0}
+.kpi-row .kpi .v{font-size:18px; font-weight:700}
+.kpi-row .kpi .l{font-size:11px; color:var(--text-mute); margin-top:2px}
+
+/* ===== Related lists ===== */
+.related-card{border:1px solid var(--border); border-radius:var(--radius); background:#fff; margin-bottom:8px}
+.related-head{padding:8px 16px; display:flex; align-items:center; border-bottom:1px solid var(--border-light); font-weight:700}
+.related-head .count{color:var(--text-mute); font-weight:400; margin-left:6px}
+.related-head .actions{margin-left:auto; display:flex; gap:6px}
+
+/* ===== Activity timeline ===== */
+.timeline{padding:8px 16px}
+.timeline .tl-item{display:flex; gap:10px; padding:8px 0; border-bottom:1px solid var(--border-light)}
+.timeline .tl-item:last-child{border-bottom:0}
+.timeline .tl-icon{
+  width:28px;height:28px;border-radius:50%; display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; color:#fff; font-size:12px; font-weight:700;
+}
+.timeline .tl-icon.call{background:#56aadc} .timeline .tl-icon.mail{background:#f88962} .timeline .tl-icon.fax{background:#9b6dff}
+.timeline .tl-body{flex:1; min-width:0}
+.timeline .tl-meta{font-size:11px; color:var(--text-mute)}
+.timeline .tl-title{font-weight:700; margin-top:2px}
+.timeline .tl-desc{margin-top:4px; color:var(--text-2)}
+
+/* ===== PDF preview ===== */
+.pdf-page{
+  background:#fff; box-shadow:0 4px 12px rgba(0,0,0,.15); margin:16px auto;
+  width:595px; min-height:842px; padding:32px 40px; color:#222; font-family:"Yu Gothic UI","Hiragino Kaku Gothic ProN",sans-serif;
+}
+.pdf-title{font-size:24px; font-weight:700; text-align:center; letter-spacing:8px; margin:8px 0 12px}
+.pdf-hdr{display:flex; justify-content:space-between; margin-bottom:8px}
+.pdf-hdr .left{font-size:14px}
+.pdf-hdr .right{font-size:11px; text-align:right; line-height:1.6}
+.pdf-amount-box{
+  border:2px solid #222; padding:8px 12px; margin:10px 0; font-size:16px;
+  display:inline-flex; gap:12px; min-width:240px;
+}
+.pdf-amount-box .l{font-weight:700}
+.pdf-amount-box .v{flex:1; text-align:right; font-weight:700}
+.pdf-tbl{width:100%; border-collapse:collapse; margin-top:8px; font-size:11px}
+.pdf-tbl th{background:#e9ecef; padding:6px; border:1px solid #999; text-align:center}
+.pdf-tbl td{padding:6px; border:1px solid #999}
+.pdf-tbl td.num{text-align:right; font-variant-numeric:tabular-nums}
+.pdf-stamp{
+  display:inline-block; width:48px; height:48px; border:2px solid #c0392b; border-radius:50%;
+  color:#c0392b; text-align:center; line-height:48px; font-size:9px; font-weight:700;
+  transform:rotate(-8deg); margin-left:auto;
+}
+.pdf-bottom{margin-top:24px; font-size:11px; line-height:1.6}
+.pdf-bottom .lbl{display:inline-block; min-width:80px; font-weight:700}
+.pdf-toolbar{
+  background:#3e3e3c; color:#fff; padding:10px 16px; display:flex; align-items:center; gap:8px; font-size:13px;
+}
+.pdf-toolbar .spacer{flex:1}
+
+/* ===== Misc ===== */
+.help-text{color:var(--text-mute); font-size:11px; margin-top:2px}
+.sec-title{font-size:11px; font-weight:700; color:var(--text-mute); padding:8px 16px; background:#fafaf9; border-bottom:1px solid var(--border-light)}
+.row-flex{display:flex; gap:8px; align-items:center}
+.dot{width:8px;height:8px;border-radius:50%; display:inline-block; margin-right:6px; vertical-align:middle}
+
+/* small screens */
+@media(max-width:780px){
+  .main{padding:8px}
+  .field-grid{grid-template-columns:1fr}
+  .dash-grid{grid-template-columns:repeat(2,1fr)}
+  .widget.span-3,.widget.span-4,.widget.span-6{grid-column:span 2}
+  .widget.span-12{grid-column:span 2}
+  .gh-search{display:none}
+}
+
+/* nav helpers */
+.crumb{font-size:11px; color:var(--text-mute); margin-bottom:4px}
+.crumb a{color:var(--text-mute)}
+.crumb .sep{margin:0 4px; color:#bbb}
+</style>
+</head>
+<body>
+
+<!-- ========================================= -->
+<!-- Global Header -->
+<!-- ========================================= -->
+<div class="global-header">
+  <div class="app-launcher" title="アプリランチャー"></div>
+  <div class="app-name">セールス <span class="sub">つばさ商会</span></div>
+  <div class="gh-spacer"></div>
+  <div class="gh-search">
+    <span style="color:#706e6b">🔍</span>
+    <input placeholder="検索..." />
+  </div>
+  <div class="gh-actions">
+    <div class="icon-btn" title="お気に入り">⭐</div>
+    <div class="icon-btn" title="通知">🔔</div>
+    <div class="icon-btn" title="ヘルプ">❓</div>
+    <div class="gh-user" title="山口 啓太">YK</div>
+  </div>
+</div>
+
+<!-- ========================================= -->
+<!-- App Bar Tabs -->
+<!-- ========================================= -->
+<div class="app-bar">
+  <div class="tab active" data-page="home">🏠 ホーム</div>
+  <div class="tab" data-page="lead-list">🧭 リード</div>
+  <div class="tab" data-page="account-list">🏢 取引先</div>
+  <div class="tab" data-page="opp-list">💼 商談</div>
+  <div class="tab" data-page="invoice-list">📄 請求書</div>
+  <div class="tab" data-page="bank-list">🏦 振込先口座</div>
+  <div class="tab" data-page="report-list">📊 レポート</div>
+  <div class="tab" data-page="dash-list">📈 ダッシュボード</div>
+</div>
+
+<div class="main">
+
+<!-- ========================================= -->
+<!-- HOME (経営ダッシュボード) -->
+<!-- ========================================= -->
+<div class="page active" id="home">
+  <div class="obj-header">
+    <div class="row1">
+      <div class="obj-icon home">🏠</div>
+      <div class="obj-title">
+        <div class="label">ホーム</div>
+        <div class="name">こんにちは、山口さん</div>
+      </div>
+      <div class="obj-actions">
+        <span style="color:var(--text-mute);font-size:12px">最終更新: 2026/05/21 09:50</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="dash-grid">
+    <div class="widget span-3">
+      <div class="w-title">📅 当月売上</div>
+      <div class="w-big">¥3,820,000</div>
+      <div class="w-sub up">▲ 前年同月比 +12.4%</div>
+    </div>
+    <div class="widget span-3">
+      <div class="w-title">💴 当月入金額</div>
+      <div class="w-big">¥2,950,000</div>
+      <div class="w-sub up">▲ 前月比 +5.1%</div>
+    </div>
+    <div class="widget span-3">
+      <div class="w-title">⚠️ 未入金合計</div>
+      <div class="w-big" style="color:var(--error)">¥1,680,000</div>
+      <div class="w-sub">7件 / うち60日超 <b style="color:var(--error)">2件</b></div>
+    </div>
+    <div class="widget span-3">
+      <div class="w-title">📦 当月商談件数</div>
+      <div class="w-big">38</div>
+      <div class="w-sub up">受注 24件 / 進行中 14件</div>
+    </div>
+
+    <div class="widget span-8">
+      <div class="w-title">📈 月次売上推移（当期 2026年2月〜2027年1月）</div>
+      <div class="bar-chart-wrap">
+        <div class="bar-chart">
+          <div class="bar" style="height:55%"><span class="v">¥3.1M</span><span class="x">2月</span></div>
+          <div class="bar" style="height:62%"><span class="v">¥3.5M</span><span class="x">3月</span></div>
+          <div class="bar" style="height:71%"><span class="v">¥4.0M</span><span class="x">4月</span></div>
+          <div class="bar" style="height:68%" title="当月"><span class="v">¥3.8M</span><span class="x" style="font-weight:700;color:var(--brand)">5月</span></div>
+          <div class="bar" style="height:20%; background:linear-gradient(0deg,#dddbda,#e8e7e6)"><span class="x">6月</span></div>
+          <div class="bar" style="height:20%; background:linear-gradient(0deg,#dddbda,#e8e7e6)"><span class="x">7月</span></div>
+          <div class="bar" style="height:20%; background:linear-gradient(0deg,#dddbda,#e8e7e6)"><span class="x">8月</span></div>
+          <div class="bar" style="height:20%; background:linear-gradient(0deg,#dddbda,#e8e7e6)"><span class="x">9月</span></div>
+          <div class="bar" style="height:20%; background:linear-gradient(0deg,#dddbda,#e8e7e6)"><span class="x">10月</span></div>
+          <div class="bar" style="height:20%; background:linear-gradient(0deg,#dddbda,#e8e7e6)"><span class="x">11月</span></div>
+          <div class="bar" style="height:20%; background:linear-gradient(0deg,#dddbda,#e8e7e6)"><span class="x">12月</span></div>
+          <div class="bar" style="height:20%; background:linear-gradient(0deg,#dddbda,#e8e7e6)"><span class="x">1月</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="widget span-4">
+      <div class="w-title">🥧 フェーズ別商談件数</div>
+      <div class="donut-wrap">
+        <div class="donut" style="background:conic-gradient(#0176d3 0 35%, #fcb95b 35% 60%, #4bc076 60% 88%, #ba0517 88% 100%);
+          mask:radial-gradient(circle at center, transparent 40px, #000 41px); -webkit-mask:radial-gradient(circle at center, transparent 40px, #000 41px);"></div>
+        <div class="legend">
+          <div class="lg-item"><span class="lg-dot" style="background:#0176d3"></span>問い合わせ <b style="margin-left:auto">14件</b></div>
+          <div class="lg-item"><span class="lg-dot" style="background:#fcb95b"></span>サンプル送付 <b style="margin-left:auto">10件</b></div>
+          <div class="lg-item"><span class="lg-dot" style="background:#4bc076"></span>見積提示 <b style="margin-left:auto">11件</b></div>
+          <div class="lg-item"><span class="lg-dot" style="background:#ba0517"></span>失注 <b style="margin-left:auto">3件</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="widget span-6">
+      <div class="w-title">🚨 未入金アラート（60日以上経過）</div>
+      <table class="tbl" style="margin-top:6px">
+        <thead><tr><th>取引先</th><th>請求書</th><th>請求書発行日</th><th class="num">金額</th><th class="num">経過日数</th></tr></thead>
+        <tbody>
+          <tr><td><a class="name-link" data-go="account-detail">株式会社 山田農園</a></td><td>INV-2026-0008</td><td>2026/03/12</td><td class="num">¥420,000</td><td class="num"><span class="badge error">70日</span></td></tr>
+          <tr><td>合同会社 緑風イベント</td><td>INV-2026-0011</td><td>2026/03/18</td><td class="num">¥175,000</td><td class="num"><span class="badge error">64日</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="widget span-6">
+      <div class="w-title">⏳ 今月の受注予定（フェーズ60〜80%）</div>
+      <table class="tbl" style="margin-top:6px">
+        <thead><tr><th>商談</th><th>取引先</th><th class="num">予定金額</th><th class="num">確度</th></tr></thead>
+        <tbody>
+          <tr><td><a class="name-link" data-go="opp-detail">OPP-2026-0042</a></td><td>株式会社 アグリ大阪</td><td class="num">¥980,000</td><td class="num"><span class="badge info">60%</span></td></tr>
+          <tr><td>OPP-2026-0044</td><td>株式会社 ベジマルシェ</td><td class="num">¥510,000</td><td class="num"><span class="badge info">60%</span></td></tr>
+          <tr><td>OPP-2026-0046</td><td>(株)サンライズ建材</td><td class="num">¥1,250,000</td><td class="num"><span class="badge warn">30%</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="widget span-6">
+      <div class="w-title">📥 サンプル送付件数（月次）</div>
+      <div class="bar-chart-wrap">
+        <div class="bar-chart" style="height:120px">
+          <div class="bar" style="height:50%; background:linear-gradient(0deg,#76ded9,#a5ede9)"><span class="v">12</span><span class="x">2月</span></div>
+          <div class="bar" style="height:62%; background:linear-gradient(0deg,#76ded9,#a5ede9)"><span class="v">15</span><span class="x">3月</span></div>
+          <div class="bar" style="height:75%; background:linear-gradient(0deg,#76ded9,#a5ede9)"><span class="v">18</span><span class="x">4月</span></div>
+          <div class="bar" style="height:90%; background:linear-gradient(0deg,#0176d3,#4faae8)"><span class="v">22</span><span class="x" style="font-weight:700;color:var(--brand)">5月</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="widget span-6">
+      <div class="w-title">📰 最近の活動</div>
+      <div class="timeline" style="padding:0; margin-top:6px">
+        <div class="tl-item">
+          <div class="tl-icon call">電</div>
+          <div class="tl-body">
+            <div class="tl-meta">2026/05/20 14:30 — 営業担当</div>
+            <div class="tl-title">株式会社 山田農園 ／ サンプル発送の追跡確認</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-icon mail">メ</div>
+          <div class="tl-body">
+            <div class="tl-meta">2026/05/20 11:10 — 山口</div>
+            <div class="tl-title">合同会社 緑風イベント ／ 入金確認のリマインド送信</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-icon fax">F</div>
+          <div class="tl-body">
+            <div class="tl-meta">2026/05/19 16:20 — 営業担当</div>
+            <div class="tl-title">アグリ大阪 ／ 見積書FAX返送（受領）</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================= -->
+<!-- LEAD LIST -->
+<!-- ========================================= -->
+<div class="page" id="lead-list">
+  <div class="obj-header">
+    <div class="row1">
+      <div class="obj-icon lead">L</div>
+      <div class="obj-title">
+        <div class="label">リード</div>
+        <div class="name">最近表示したリスト <span style="color:var(--text-mute);font-weight:400;font-size:13px">▼</span></div>
+      </div>
+      <div class="obj-actions">
+        <button class="btn">インポート</button>
+        <button class="btn primary">新規</button>
+      </div>
+    </div>
+  </div>
+  <table class="tbl">
+    <thead><tr>
+      <th>会社名</th><th>所在地</th><th>電話</th><th>業種</th><th>流入経路</th><th>サンプル送付</th><th>状況</th>
+    </tr></thead>
+    <tbody>
+      <tr><td><a class="name-link" data-go="lead-detail">株式会社 大和フードサービス</a></td><td>大阪府堺市</td><td>072-xxx-xxxx</td><td>農業</td><td>FAX-DM</td><td><span class="badge success">送付済 (2026/05/12)</span></td><td><span class="badge info">未対応</span></td></tr>
+      <tr><td>合同会社 ホクト商事</td><td>京都府京都市</td><td>075-xxx-xxxx</td><td>イベント</td><td>Meta広告</td><td><span class="badge gray">未送付</span></td><td><span class="badge info">対応中</span></td></tr>
+      <tr><td>株式会社 ニュー菜園</td><td>滋賀県大津市</td><td>077-xxx-xxxx</td><td>農業</td><td>紹介</td><td><span class="badge success">送付済 (2026/05/08)</span></td><td><span class="badge warn">商談化検討</span></td></tr>
+      <tr><td>(株)シティイベント</td><td>東京都港区</td><td>03-xxxx-xxxx</td><td>イベント</td><td>Meta広告</td><td><span class="badge gray">未送付</span></td><td><span class="badge info">対応中</span></td></tr>
+      <tr><td>農事組合法人 つばき会</td><td>奈良県奈良市</td><td>0742-xxx-xxx</td><td>農業</td><td>FAX-DM</td><td><span class="badge success">送付済 (2026/04/30)</span></td><td><span class="badge gray">休眠</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========================================= -->
+<!-- LEAD DETAIL -->
+<!-- ========================================= -->
+<div class="page" id="lead-detail">
+  <div class="crumb">
+    <a data-go="lead-list">リード</a><span class="sep">›</span>株式会社 大和フードサービス
+  </div>
+  <div class="obj-header">
+    <div class="row1">
+      <div class="obj-icon lead">L</div>
+      <div class="obj-title">
+        <div class="label">リード</div>
+        <div class="name">株式会社 大和フードサービス</div>
+      </div>
+      <div class="obj-actions">
+        <button class="btn">編集</button>
+        <button class="btn">サンプル送付済にする</button>
+        <button class="btn primary" onclick="convertLead()">取引先に変換</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="highlights">
+    <div class="item"><div class="lbl">会社名</div><div class="val">株式会社 大和フードサービス</div></div>
+    <div class="item"><div class="lbl">電話</div><div class="val">072-xxx-xxxx</div></div>
+    <div class="item"><div class="lbl">業種</div><div class="val">農業</div></div>
+    <div class="item"><div class="lbl">流入経路</div><div class="val">FAX-DM</div></div>
+    <div class="item"><div class="lbl">サンプル送付</div><div class="val"><span class="badge success">送付済 (2026/05/12)</span></div></div>
+  </div>
+
+  <div class="two-col-3">
+    <div>
+      <div class="card">
+        <div class="card-head">📝 詳細</div>
+        <div class="card-body">
+          <div class="field-grid">
+            <div class="field"><div class="lbl">会社名</div><div class="val">株式会社 大和フードサービス</div></div>
+            <div class="field"><div class="lbl">業種</div><div class="val">農業</div></div>
+            <div class="field"><div class="lbl">所在地</div><div class="val">〒590-0000 大阪府堺市美原区xxx 1-2-3</div></div>
+            <div class="field"><div class="lbl">電話</div><div class="val">072-xxx-xxxx</div></div>
+            <div class="field"><div class="lbl">流入経路</div><div class="val">FAX-DM</div></div>
+            <div class="field"><div class="lbl">状況</div><div class="val">未対応</div></div>
+            <div class="field"><div class="lbl">サンプル送付済</div><div class="val">✅ チェック済</div></div>
+            <div class="field"><div class="lbl">サンプル送付日</div><div class="val">2026/05/12</div></div>
+            <div class="field full"><div class="lbl">備考</div><div class="val">5月の展示会で名刺交換。圃場のぬかるみ対策で50枚規模を検討中。</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="related-card">
+        <div class="related-head">📞 活動 <span class="count">(2)</span></div>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-icon call">電</div>
+            <div class="tl-body">
+              <div class="tl-meta">2026/05/14 10:30</div>
+              <div class="tl-title">初回ヒアリング電話</div>
+              <div class="tl-desc">利用イメージ確認。サンプル希望 → 即日発送手配。</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-icon mail">メ</div>
+            <div class="tl-body">
+              <div class="tl-meta">2026/05/12 18:00</div>
+              <div class="tl-title">サンプル発送案内メール送付</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="related-card">
+        <div class="related-head">📎 ファイル <span class="count">(1)</span></div>
+        <div style="padding:12px 16px; color:var(--text-mute); font-size:12px">📄 名刺_大和フードサービス.jpg</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================= -->
+<!-- ACCOUNT LIST -->
+<!-- ========================================= -->
+<div class="page" id="account-list">
+  <div class="obj-header">
+    <div class="row1">
+      <div class="obj-icon account">A</div>
+      <div class="obj-title">
+        <div class="label">取引先</div>
+        <div class="name">すべての取引先 <span style="color:var(--text-mute);font-weight:400;font-size:13px">▼</span></div>
+      </div>
+      <div class="obj-actions">
+        <button class="btn">インポート</button>
+        <button class="btn primary">新規</button>
+      </div>
+    </div>
+  </div>
+  <table class="tbl">
+    <thead><tr>
+      <th>法人名</th><th>業種</th><th>電話</th><th>請求書送付先</th><th>サンプル送付</th><th class="num">未入金額</th>
+    </tr></thead>
+    <tbody>
+      <tr><td><a class="name-link" data-go="account-detail">株式会社 山田農園</a></td><td>農業</td><td>06-xxxx-1111</td><td>大阪府東大阪市...</td><td><span class="badge success">送付済</span></td><td class="num" style="color:var(--error)">¥420,000</td></tr>
+      <tr><td>株式会社 アグリ大阪</td><td>農業</td><td>06-xxxx-2222</td><td>大阪府堺市...</td><td><span class="badge success">送付済</span></td><td class="num">¥0</td></tr>
+      <tr><td>合同会社 緑風イベント</td><td>イベント</td><td>075-xxxx-3333</td><td>京都府京都市...</td><td><span class="badge gray">未送付</span></td><td class="num" style="color:var(--error)">¥175,000</td></tr>
+      <tr><td>株式会社 ベジマルシェ</td><td>農業</td><td>078-xxxx-4444</td><td>兵庫県神戸市...</td><td><span class="badge success">送付済</span></td><td class="num">¥0</td></tr>
+      <tr><td>(株)サンライズ建材</td><td>建設</td><td>03-xxxx-5555</td><td>東京都港区...</td><td><span class="badge gray">未送付</span></td><td class="num">¥0</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========================================= -->
+<!-- ACCOUNT DETAIL -->
+<!-- ========================================= -->
+<div class="page" id="account-detail">
+  <div class="crumb">
+    <a data-go="account-list">取引先</a><span class="sep">›</span>株式会社 山田農園
+  </div>
+  <div class="obj-header">
+    <div class="row1">
+      <div class="obj-icon account">A</div>
+      <div class="obj-title">
+        <div class="label">取引先</div>
+        <div class="name">株式会社 山田農園</div>
+      </div>
+      <div class="obj-actions">
+        <button class="btn">編集</button>
+        <button class="btn">新規連絡</button>
+        <button class="btn primary">新規商談</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="highlights">
+    <div class="item"><div class="lbl">業種</div><div class="val">農業</div></div>
+    <div class="item"><div class="lbl">電話</div><div class="val">06-xxxx-1111</div></div>
+    <div class="item"><div class="lbl">取引履歴</div><div class="val">受注12件 / ¥6,840,000</div></div>
+    <div class="item"><div class="lbl">未入金</div><div class="val" style="color:var(--error)">¥420,000（70日経過）</div></div>
+    <div class="item"><div class="lbl">サンプル送付</div><div class="val"><span class="badge success">送付済 (2025/11/02)</span></div></div>
+  </div>
+
+  <div class="two-col-3">
+    <div>
+      <div class="card">
+        <div class="card-head">📝 詳細</div>
+        <div class="card-body">
+          <div class="sec-title" style="margin:-12px -16px 8px">基本情報</div>
+          <div class="field-grid">
+            <div class="field"><div class="lbl">法人名</div><div class="val">株式会社 山田農園</div></div>
+            <div class="field"><div class="lbl">業種</div><div class="val">農業</div></div>
+            <div class="field"><div class="lbl">電話</div><div class="val">06-xxxx-1111</div></div>
+            <div class="field"><div class="lbl">サンプル送付済</div><div class="val">✅ チェック済</div></div>
+            <div class="field full"><div class="lbl">請求書送付先住所</div><div class="val">〒577-0000 大阪府東大阪市xxx 4-5-6 山田農園 事務所</div></div>
+          </div>
+
+          <div class="sec-title" style="margin:16px -16px 8px">配送先住所</div>
+          <div class="field-grid">
+            <div class="field"><div class="lbl">配送先1 宛名</div><div class="val">山田農園 第1圃場</div></div>
+            <div class="field"><div class="lbl">配送先1 住所</div><div class="val">〒577-0001 大阪府東大阪市xxx 4-5-6</div></div>
+            <div class="field"><div class="lbl">配送先2 宛名</div><div class="val">山田農園 第2圃場（高槻）</div></div>
+            <div class="field"><div class="lbl">配送先2 住所</div><div class="val">〒569-0000 大阪府高槻市xxx 1-2</div></div>
+            <div class="field"><div class="lbl">配送先3 宛名</div><div class="val">直送 / 大阪府泉佐野 ハウス</div></div>
+            <div class="field"><div class="lbl">配送先3 住所</div><div class="val">〒598-0000 大阪府泉佐野市xxx 7-8</div></div>
+          </div>
+
+          <div class="sec-title" style="margin:16px -16px 8px">その他</div>
+          <div class="field-grid">
+            <div class="field full"><div class="lbl">備考</div><div class="val">繁忙期（4〜6月）はリピート発注多め。請求書はPDFメール送付を希望。</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="related-card">
+        <div class="related-head">💼 商談 <span class="count">(12)</span><div class="actions"><button class="btn small">新規</button></div></div>
+        <table class="tbl">
+          <tr><td><a class="name-link" data-go="opp-detail">OPP-2026-0030</a></td><td>受注</td><td class="num">¥750,000</td></tr>
+          <tr><td>OPP-2026-0018</td><td>受注</td><td class="num">¥420,000</td></tr>
+          <tr><td>OPP-2025-0182</td><td>受注</td><td class="num">¥980,000</td></tr>
+          <tr><td colspan="3" style="text-align:center;color:var(--brand);cursor:pointer">すべて表示 (12)</td></tr>
+        </table>
+      </div>
+
+      <div class="related-card">
+        <div class="related-head">📞 活動 <span class="count">(8)</span></div>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-icon call">電</div>
+            <div class="tl-body">
+              <div class="tl-meta">2026/05/20 14:30</div>
+              <div class="tl-title">出荷追跡の問い合わせ対応</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-icon mail">メ</div>
+            <div class="tl-body">
+              <div class="tl-meta">2026/05/10 09:00</div>
+              <div class="tl-title">入金リマインドメール送信</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="related-card">
+        <div class="related-head">📄 請求書 <span class="count">(11)</span></div>
+        <table class="tbl">
+          <tr><td><a class="name-link" data-go="invoice-detail">INV-2026-0008</a></td><td><span class="badge error">未入金</span></td><td class="num">¥420,000</td></tr>
+          <tr><td>INV-2026-0001</td><td><span class="badge success">入金済</span></td><td class="num">¥750,000</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================= -->
+<!-- OPP LIST -->
+<!-- ========================================= -->
+<div class="page" id="opp-list">
+  <div class="obj-header">
+    <div class="row1">
+      <div class="obj-icon opp">O</div>
+      <div class="obj-title">
+        <div class="label">商談</div>
+        <div class="name">すべての商談 <span style="color:var(--text-mute);font-weight:400;font-size:13px">▼</span></div>
+      </div>
+      <div class="obj-actions">
+        <button class="btn primary" onclick="openNewOpp()">新規</button>
+      </div>
+    </div>
+  </div>
+  <table class="tbl">
+    <thead><tr>
+      <th>商談番号</th><th>取引先</th><th>フェーズ</th><th>受注日</th><th class="num">金額</th><th>出荷</th><th>入金</th>
+    </tr></thead>
+    <tbody>
+      <tr><td><a class="name-link" data-go="opp-detail">OPP-2026-0030</a></td><td>株式会社 山田農園</td><td><span class="badge info">見積提示 (60%)</span></td><td>2026/05/25 予定</td><td class="num">¥750,000</td><td>—</td><td>—</td></tr>
+      <tr><td>OPP-2026-0029</td><td>株式会社 アグリ大阪</td><td><span class="badge success">受注 (100%)</span></td><td>2026/05/18</td><td class="num">¥980,000</td><td>出荷済</td><td><span class="badge warn">未入金 (3日)</span></td></tr>
+      <tr><td>OPP-2026-0028</td><td>合同会社 緑風イベント</td><td><span class="badge success">受注 (100%)</span></td><td>2026/03/18</td><td class="num">¥175,000</td><td>出荷済</td><td><span class="badge error">未入金 (64日)</span></td></tr>
+      <tr><td>OPP-2026-0027</td><td>株式会社 ベジマルシェ</td><td><span class="badge warn">サンプル送付 (30%)</span></td><td>2026/06/10 予定</td><td class="num">¥510,000</td><td>—</td><td>—</td></tr>
+      <tr><td>OPP-2026-0026</td><td>(株)サンライズ建材</td><td><span class="badge info">問い合わせ (10%)</span></td><td>2026/06/30 予定</td><td class="num">¥1,250,000</td><td>—</td><td>—</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========================================= -->
+<!-- OPP DETAIL -->
+<!-- ========================================= -->
+<div class="page" id="opp-detail">
+  <div class="crumb">
+    <a data-go="opp-list">商談</a><span class="sep">›</span>OPP-2026-0030
+  </div>
+  <div class="obj-header">
+    <div class="row1">
+      <div class="obj-icon opp">O</div>
+      <div class="obj-title">
+        <div class="label">商談</div>
+        <div class="name">OPP-2026-0030 ／ 株式会社 山田農園 セーフティプラボード50枚</div>
+      </div>
+      <div class="obj-actions">
+        <button class="btn">編集</button>
+        <button class="btn" onclick="showPdf('quote')">📄 見積書PDF出力</button>
+        <button class="btn success" onclick="closeWon()">受注（100%）にする</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="path">
+    <div class="stage completed">1. 問い合わせ</div>
+    <div class="stage completed">2. サンプル送付</div>
+    <div class="stage current">3. 見積提示 (60%)</div>
+    <div class="stage">4. 受注 (100%)</div>
+    <div class="stage">5. 失注</div>
+  </div>
+
+  <div class="highlights">
+    <div class="item"><div class="lbl">金額</div><div class="val">¥750,000</div></div>
+    <div class="item"><div class="lbl">取引先</div><div class="val">株式会社 山田農園</div></div>
+    <div class="item"><div class="lbl">受注予定日</div><div class="val">2026/05/25</div></div>
+    <div class="item"><div class="lbl">所有者</div><div class="val">山口 啓太</div></div>
+  </div>
+
+  <div class="two-col-3">
+    <div>
+      <div class="card">
+        <div class="card-head">📋 詳細</div>
+        <div class="card-body">
+          <div class="sec-title" style="margin:-12px -16px 8px">商談情報</div>
+          <div class="field-grid">
+            <div class="field"><div class="lbl">商談番号 / 案件名</div><div class="val">OPP-2026-0030</div></div>
+            <div class="field"><div class="lbl">フェーズ</div><div class="val">3. 見積提示 (60%)</div></div>
+            <div class="field"><div class="lbl">取引先</div><div class="val">株式会社 山田農園</div></div>
+            <div class="field"><div class="lbl">受注予定日</div><div class="val">2026/05/25</div></div>
+            <div class="field"><div class="lbl">所有者</div><div class="val">山口 啓太</div></div>
+            <div class="field"><div class="lbl">配送先</div><div class="val">配送先2: 山田農園 第2圃場（高槻）</div></div>
+          </div>
+
+          <div class="sec-title" style="margin:16px -16px 8px">明細</div>
+          <table class="tbl">
+            <thead><tr><th>#</th><th>商品</th><th class="num">数量</th><th class="num">単価</th><th class="num">金額</th><th>備考</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>セーフティプラボード SP-1500</td><td class="num">50</td><td class="num">¥13,000</td><td class="num">¥650,000</td><td>緑色</td></tr>
+              <tr><td>2</td><td>連結固定金具 J型</td><td class="num">200</td><td class="num">¥350</td><td class="num">¥70,000</td><td>—</td></tr>
+            </tbody>
+            <tfoot>
+              <tr><td colspan="4" class="num" style="font-weight:700">小計</td><td class="num" style="font-weight:700">¥720,000</td><td></td></tr>
+              <tr><td colspan="4" class="num">送料</td><td class="num">¥35,000</td><td></td></tr>
+              <tr><td colspan="4" class="num">値引</td><td class="num">−¥5,000</td><td></td></tr>
+              <tr style="background:var(--brand-50)"><td colspan="4" class="num" style="font-weight:700">合計（税込）</td><td class="num" style="font-weight:700">¥750,000</td><td></td></tr>
+            </tfoot>
+          </table>
+          <div style="text-align:right; margin-top:6px"><button class="btn small">明細を追加</button></div>
+
+          <div class="sec-title" style="margin:16px -16px 8px">出荷情報</div>
+          <div class="field-grid">
+            <div class="field"><div class="lbl">出荷日</div><div class="val">—（未出荷）</div></div>
+            <div class="field"><div class="lbl">運送会社</div><div class="val">—</div></div>
+            <div class="field"><div class="lbl">追跡番号</div><div class="val">—</div></div>
+          </div>
+
+          <div class="sec-title" style="margin:16px -16px 8px">入金情報</div>
+          <div class="field-grid">
+            <div class="field"><div class="lbl">請求書発行日</div><div class="val">—（未発行）</div></div>
+            <div class="field"><div class="lbl">入金日</div><div class="val">—</div></div>
+            <div class="field"><div class="lbl">未入金日数</div><div class="val">—</div></div>
+            <div class="field"><div class="lbl">入金ステータス</div><div class="val"><span class="badge gray">未請求</span></div></div>
+          </div>
+
+          <div class="sec-title" style="margin:16px -16px 8px">備考</div>
+          <div class="field-grid">
+            <div class="field full"><div class="lbl">備考</div><div class="val">繁忙期前の前倒し納品希望あり。納期は5月末まで。</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="related-card">
+        <div class="related-head">📄 関連帳票<div class="actions"></div></div>
+        <div style="padding:12px 16px">
+          <div style="display:flex; align-items:center; gap:8px; padding:6px 0">
+            <span style="font-size:18px">📄</span>
+            <div style="flex:1">
+              <div style="font-weight:700">見積書（v2）</div>
+              <div class="help-text">2026/05/18 12:34 出力</div>
+            </div>
+            <button class="btn small" onclick="showPdf('quote')">プレビュー</button>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px; padding:6px 0">
+            <span style="font-size:18px">📄</span>
+            <div style="flex:1">
+              <div style="font-weight:700">見積書（v1）</div>
+              <div class="help-text">2026/05/14 16:20 出力</div>
+            </div>
+            <button class="btn small" onclick="showPdf('quote')">プレビュー</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="related-card">
+        <div class="related-head">📞 活動 <span class="count">(4)</span></div>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-icon call">電</div>
+            <div class="tl-body">
+              <div class="tl-meta">2026/05/19 11:00</div>
+              <div class="tl-title">山口様 ／ 仕様確認</div>
+              <div class="tl-desc">第2圃場宛で50枚OK、納期5/25。</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-icon mail">メ</div>
+            <div class="tl-body">
+              <div class="tl-meta">2026/05/18 12:34</div>
+              <div class="tl-title">見積書（v2）送付</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-icon fax">F</div>
+            <div class="tl-body">
+              <div class="tl-meta">2026/05/14 16:20</div>
+              <div class="tl-title">見積書（v1）FAX送付</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="related-card">
+        <div class="related-head">💡 自動化（Flow）</div>
+        <div style="padding:12px 16px; font-size:12px; color:var(--text-2)">
+          ✅ フェーズ「受注 (100%)」に更新すると、<a>請求書レコードが自動生成</a>されます<br/>
+          📅 日次スケジュールFlowで未入金60日経過時にアラート
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================= -->
+<!-- INVOICE LIST -->
+<!-- ========================================= -->
+<div class="page" id="invoice-list">
+  <div class="obj-header">
+    <div class="row1">
+      <div class="obj-icon invoice">I</div>
+      <div class="obj-title">
+        <div class="label">請求書</div>
+        <div class="name">未入金一覧 <span style="color:var(--text-mute);font-weight:400;font-size:13px">▼</span></div>
+      </div>
+      <div class="obj-actions">
+        <button class="btn primary">新規</button>
+      </div>
+    </div>
+  </div>
+  <table class="tbl">
+    <thead><tr>
+      <th>請求書番号</th><th>取引先</th><th>商談</th><th>発行日</th><th class="num">金額</th><th>ステータス</th><th class="num">未入金日数</th>
+    </tr></thead>
+    <tbody>
+      <tr><td><a class="name-link" data-go="invoice-detail">INV-2026-0008</a></td><td>株式会社 山田農園</td><td>OPP-2026-0018</td><td>2026/03/12</td><td class="num">¥420,000</td><td><span class="badge error">未入金</span></td><td class="num"><span class="badge error">70日</span></td></tr>
+      <tr><td>INV-2026-0011</td><td>合同会社 緑風イベント</td><td>OPP-2026-0028</td><td>2026/03/18</td><td class="num">¥175,000</td><td><span class="badge error">未入金</span></td><td class="num"><span class="badge error">64日</span></td></tr>
+      <tr><td>INV-2026-0015</td><td>株式会社 アグリ大阪</td><td>OPP-2026-0029</td><td>2026/05/18</td><td class="num">¥980,000</td><td><span class="badge warn">未入金</span></td><td class="num">3日</td></tr>
+      <tr><td>INV-2026-0014</td><td>株式会社 ベジマルシェ</td><td>OPP-2026-0025</td><td>2026/04/30</td><td class="num">¥620,000</td><td><span class="badge success">入金済</span></td><td class="num">—</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========================================= -->
+<!-- INVOICE DETAIL -->
+<!-- ========================================= -->
+<div class="page" id="invoice-detail">
+  <div class="crumb">
+    <a data-go="invoice-list">請求書</a><span class="sep">›</span>INV-2026-0008
+  </div>
+  <div class="obj-header">
+    <div class="row1">
+      <div class="obj-icon invoice">I</div>
+      <div class="obj-title">
+        <div class="label">請求書</div>
+        <div class="name">INV-2026-0008</div>
+      </div>
+      <div class="obj-actions">
+        <button class="btn">編集</button>
+        <button class="btn" onclick="showPdf('invoice')">📄 請求書PDF出力</button>
+        <button class="btn success" onclick="markPaid()">入金済にする</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="highlights">
+    <div class="item"><div class="lbl">金額</div><div class="val">¥420,000</div></div>
+    <div class="item"><div class="lbl">取引先</div><div class="val">株式会社 山田農園</div></div>
+    <div class="item"><div class="lbl">発行日</div><div class="val">2026/03/12</div></div>
+    <div class="item"><div class="lbl">経過日数</div><div class="val"><span class="badge error">70日（未入金）</span></div></div>
+    <div class="item"><div class="lbl">商談</div><div class="val"><a class="name-link" data-go="opp-detail">OPP-2026-0018</a></div></div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-head">📋 詳細</div>
+      <div class="card-body">
+        <div class="field-grid">
+          <div class="field"><div class="lbl">請求書番号</div><div class="val">INV-2026-0008</div></div>
+          <div class="field"><div class="lbl">ステータス</div><div class="val"><span class="badge error">未入金</span></div></div>
+          <div class="field"><div class="lbl">取引先</div><div class="val">株式会社 山田農園</div></div>
+          <div class="field"><div class="lbl">商談</div><div class="val">OPP-2026-0018</div></div>
+          <div class="field"><div class="lbl">発行日</div><div class="val">2026/03/12</div></div>
+          <div class="field"><div class="lbl">支払期限</div><div class="val">2026/04/30（月末締め翌月末払い）</div></div>
+          <div class="field"><div class="lbl">小計</div><div class="val">¥400,000</div></div>
+          <div class="field"><div class="lbl">送料</div><div class="val">¥20,000</div></div>
+          <div class="field"><div class="lbl">合計（税込）</div><div class="val" style="font-weight:700; font-size:15px">¥420,000</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">🏦 振込先口座</div>
+      <div class="card-body">
+        <div style="padding:8px 0; border-bottom:1px solid var(--border-light)">
+          <div style="font-size:11px; color:var(--text-mute)">口座1（メイン表示）</div>
+          <div style="font-weight:700; margin-top:2px">三井住友銀行 尼崎支店</div>
+          <div>普通 1234567 ／ カブシキガイシャ ツバサショウカイ</div>
+        </div>
+        <div style="padding:8px 0">
+          <div style="font-size:11px; color:var(--text-mute)">口座2（サブ表示）</div>
+          <div style="font-weight:700; margin-top:2px">三菱UFJ銀行 大阪本店</div>
+          <div>普通 7654321 ／ カブシキガイシャ ツバサショウカイ</div>
+        </div>
+        <div style="margin-top:8px"><a data-go="bank-list">▶ 振込先口座マスタを編集</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================= -->
+<!-- BANK ACCOUNT LIST -->
+<!-- ========================================= -->
+<div class="page" id="bank-list">
+  <div class="obj-header">
+    <div class="row1">
+      <div class="obj-icon bank">B</div>
+      <div class="obj-title">
+        <div class="label">振込先口座</div>
+        <div class="name">マスタ管理</div>
+      </div>
+      <div class="obj-actions">
+        <button class="btn primary" onclick="openBankModal()">＋ 口座を追加</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">🏦 登録済み口座 <span class="count" style="margin-left:6px;color:var(--text-mute);font-weight:400">(2件)</span></div>
+    <div class="card-body" style="padding:0">
+      <table class="tbl">
+        <thead><tr><th>並び順</th><th>表示名</th><th>銀行・支店</th><th>種別</th><th>口座番号</th><th>名義</th><th>有効</th><th></th></tr></thead>
+        <tbody>
+          <tr>
+            <td>1</td><td>メイン口座</td><td>三井住友銀行 尼崎支店</td><td>普通</td><td>1234567</td><td>カブシキガイシャ ツバサショウカイ</td><td><span class="badge success">有効</span></td><td><button class="btn small">編集</button></td>
+          </tr>
+          <tr>
+            <td>2</td><td>サブ口座</td><td>三菱UFJ銀行 大阪本店</td><td>普通</td><td>7654321</td><td>カブシキガイシャ ツバサショウカイ</td><td><span class="badge success">有効</span></td><td><button class="btn small">編集</button></td>
+          </tr>
+          <tr style="opacity:.6">
+            <td>—</td><td>旧 振込先（参考）</td><td>みずほ銀行 神戸支店</td><td>普通</td><td>9999999</td><td>カブシキガイシャ ツバサショウカイ</td><td><span class="badge gray">無効</span></td><td><button class="btn small">編集</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">💡 運用ヒント</div>
+    <div class="card-body" style="font-size:12px; color:var(--text-2); line-height:1.7">
+      • 「有効」の口座のうち並び順 1, 2 の口座が請求書PDF・請求書レコードに表示されます。<br/>
+      • 銀行を変更したい場合は、新しい口座を追加 → 旧口座を「無効」に切り替える運用です（履歴を保持するため削除はしません）。<br/>
+      • 並び順を変えるとすぐにすべての新規請求書に反映されます（既存PDFには反映されません）。
+    </div>
+  </div>
+</div>
+
+<!-- ========================================= -->
+<!-- REPORT LIST -->
+<!-- ========================================= -->
+<div class="page" id="report-list">
+  <div class="obj-header">
+    <div class="row1">
+      <div class="obj-icon report">R</div>
+      <div class="obj-title">
+        <div class="label">レポート</div>
+        <div class="name">すべてのレポート</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">経営層向け</div>
+    <table class="tbl">
+      <tr><td>📊 月次売上推移（前年同月比）</td><td>売上 / Opportunity</td><td>最終更新 2026/05/20</td></tr>
+      <tr><td>📊 当期売上合計（2月〜1月会計期）</td><td>売上 / Opportunity</td><td>2026/05/20</td></tr>
+      <tr><td>📊 当月入金額一覧</td><td>入金 / Opportunity</td><td>2026/05/20</td></tr>
+      <tr><td>📊 未入金額合計</td><td>未入金 / Invoice__c</td><td>2026/05/20</td></tr>
+      <tr><td>📊 当月商談件数</td><td>商談 / Opportunity</td><td>2026/05/20</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-head">営業向け</div>
+    <table class="tbl">
+      <tr><td>📊 フェーズ別商談一覧</td><td>パイプライン / Opportunity</td><td>2026/05/21</td></tr>
+      <tr><td>📊 今月の受注予定額</td><td>パイプライン / Opportunity</td><td>2026/05/21</td></tr>
+      <tr><td>📊 停滞案件リスト（最終更新14日以上）</td><td>パイプライン / Opportunity</td><td>2026/05/21</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-head">事務向け</div>
+    <table class="tbl">
+      <tr><td>📊 今月入金一覧</td><td>入金 / Opportunity</td><td>2026/05/21</td></tr>
+      <tr><td>📊 未入金60日超アラート</td><td>未入金 / Invoice__c</td><td>2026/05/21</td></tr>
+      <tr><td>📊 当月入金総額</td><td>入金 / Opportunity</td><td>2026/05/21</td></tr>
+      <tr><td>📊 総未入金額合計</td><td>未入金 / Invoice__c</td><td>2026/05/21</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-head">マーケ・販促</div>
+    <table class="tbl">
+      <tr><td>📊 月次サンプル送付件数（リード）</td><td>サンプル / Lead</td><td>2026/05/21</td></tr>
+      <tr><td>📊 月次サンプル送付件数（取引先）</td><td>サンプル / Account</td><td>2026/05/21</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ========================================= -->
+<!-- DASHBOARD LIST -->
+<!-- ========================================= -->
+<div class="page" id="dash-list">
+  <div class="obj-header">
+    <div class="row1">
+      <div class="obj-icon dashboard">D</div>
+      <div class="obj-title">
+        <div class="label">ダッシュボード</div>
+        <div class="name">事務 ダッシュボード（未入金監視）</div>
+      </div>
+      <div class="obj-actions">
+        <button class="btn">更新</button>
+        <select class="btn"><option>経営層 ダッシュボード</option><option selected>事務 ダッシュボード</option><option>営業 ダッシュボード</option><option>マーケ ダッシュボード</option></select>
+      </div>
+    </div>
+  </div>
+
+  <div class="dash-grid">
+    <div class="widget span-3">
+      <div class="w-title">当月入金総額</div>
+      <div class="w-big">¥2,950,000</div>
+      <div class="w-sub up">▲ 前月比 +5.1%</div>
+    </div>
+    <div class="widget span-3">
+      <div class="w-title">総未入金額合計</div>
+      <div class="w-big" style="color:var(--error)">¥1,680,000</div>
+      <div class="w-sub">7件</div>
+    </div>
+    <div class="widget span-3">
+      <div class="w-title">60日超アラート</div>
+      <div class="w-big" style="color:var(--error)">2件</div>
+      <div class="w-sub">合計 ¥595,000</div>
+    </div>
+    <div class="widget span-3">
+      <div class="w-title">今月の入金件数</div>
+      <div class="w-big">16</div>
+      <div class="w-sub">前月 14件</div>
+    </div>
+
+    <div class="widget span-12">
+      <div class="w-title">📋 未入金一覧（経過日数順）</div>
+      <table class="tbl" style="margin-top:6px">
+        <thead><tr>
+          <th>請求書</th><th>取引先</th><th>商談</th><th>発行日</th><th class="num">金額</th><th class="num">経過日数</th><th>担当</th><th></th>
+        </tr></thead>
+        <tbody>
+          <tr><td>INV-2026-0008</td><td>株式会社 山田農園</td><td>OPP-2026-0018</td><td>2026/03/12</td><td class="num">¥420,000</td><td class="num"><span class="badge error">70日</span></td><td>山口</td><td><button class="btn small">入金確認</button></td></tr>
+          <tr><td>INV-2026-0011</td><td>合同会社 緑風イベント</td><td>OPP-2026-0028</td><td>2026/03/18</td><td class="num">¥175,000</td><td class="num"><span class="badge error">64日</span></td><td>山口</td><td><button class="btn small">入金確認</button></td></tr>
+          <tr><td>INV-2026-0013</td><td>(株)シティイベント</td><td>OPP-2026-0022</td><td>2026/04/05</td><td class="num">¥210,000</td><td class="num"><span class="badge warn">46日</span></td><td>山口</td><td><button class="btn small">入金確認</button></td></tr>
+          <tr><td>INV-2026-0015</td><td>株式会社 アグリ大阪</td><td>OPP-2026-0029</td><td>2026/05/18</td><td class="num">¥980,000</td><td class="num">3日</td><td>山口</td><td><button class="btn small">入金確認</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+</div><!-- /main -->
+
+<!-- ========================================= -->
+<!-- Modal: New Opportunity -->
+<!-- ========================================= -->
+<div class="modal-mask" id="modal-new-opp">
+  <div class="modal">
+    <div class="modal-head">
+      <span style="font-size:18px">💼</span>
+      <h2>新規商談 — 受注内容を入力</h2>
+      <div class="close" onclick="closeModal('modal-new-opp')">✕</div>
+    </div>
+    <div class="modal-body">
+      <div class="form-2col">
+        <div class="form-row">
+          <label>取引先<span class="req">*</span></label>
+          <select><option>株式会社 山田農園</option><option>株式会社 アグリ大阪</option><option>+ 新しい取引先を作成</option></select>
+        </div>
+        <div class="form-row">
+          <label>配送先</label>
+          <select>
+            <option>配送先1: 山田農園 第1圃場</option>
+            <option selected>配送先2: 山田農園 第2圃場（高槻）</option>
+            <option>配送先3: 直送 / 大阪府泉佐野 ハウス</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>商談番号（自動採番）</label>
+          <input value="OPP-2026-0047" readonly style="background:#fafaf9">
+        </div>
+        <div class="form-row">
+          <label>受注予定日<span class="req">*</span></label>
+          <input type="date" value="2026-05-30">
+        </div>
+        <div class="form-row">
+          <label>フェーズ<span class="req">*</span></label>
+          <select><option selected>1. 問い合わせ (10%)</option><option>2. サンプル送付 (30%)</option><option>3. 見積提示 (60%)</option></select>
+        </div>
+        <div class="form-row">
+          <label>所有者</label>
+          <input value="山口 啓太" readonly style="background:#fafaf9">
+        </div>
+      </div>
+
+      <div style="margin-top:8px; font-weight:700; font-size:13px">明細</div>
+      <table class="tbl" style="margin-top:6px">
+        <thead><tr><th style="width:40%">商品</th><th class="num">数量</th><th class="num">単価</th><th class="num">金額</th><th></th></tr></thead>
+        <tbody id="opp-lines">
+          <tr>
+            <td><select style="width:100%"><option>セーフティプラボード SP-1500</option><option>セーフティプラボード SP-2000</option><option>連結固定金具 J型</option></select></td>
+            <td class="num"><input type="number" value="50" style="width:80px; text-align:right"></td>
+            <td class="num"><input type="number" value="13000" style="width:100px; text-align:right"></td>
+            <td class="num">¥650,000</td>
+            <td><button class="btn small">×</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top:6px"><button class="btn small" onclick="addLine()">＋ 明細を追加</button></div>
+
+      <div class="form-2col" style="margin-top:12px">
+        <div class="form-row">
+          <label>送料</label>
+          <input type="number" value="35000">
+        </div>
+        <div class="form-row">
+          <label>値引</label>
+          <input type="number" value="5000">
+        </div>
+      </div>
+      <div class="form-row">
+        <label>備考</label>
+        <textarea rows="2" placeholder="納期希望や注意事項など"></textarea>
+      </div>
+
+      <div style="background:var(--brand-50); padding:10px 14px; border-radius:4px; margin-top:8px; display:flex; justify-content:space-between">
+        <span>合計（税込）</span>
+        <span style="font-weight:700; font-size:16px">¥750,000</span>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeModal('modal-new-opp')">キャンセル</button>
+      <button class="btn primary" onclick="saveOpp()">保存して見積書を出力</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================= -->
+<!-- Modal: Bank Account -->
+<!-- ========================================= -->
+<div class="modal-mask" id="modal-bank">
+  <div class="modal" style="width:520px">
+    <div class="modal-head">
+      <span style="font-size:18px">🏦</span>
+      <h2>振込先口座を追加</h2>
+      <div class="close" onclick="closeModal('modal-bank')">✕</div>
+    </div>
+    <div class="modal-body">
+      <div class="form-row"><label>表示名<span class="req">*</span></label><input placeholder="例: メイン口座"></div>
+      <div class="form-2col">
+        <div class="form-row"><label>銀行名<span class="req">*</span></label><input placeholder="例: 三井住友銀行"></div>
+        <div class="form-row"><label>支店名<span class="req">*</span></label><input placeholder="例: 尼崎支店"></div>
+      </div>
+      <div class="form-2col">
+        <div class="form-row"><label>種別</label><select><option>普通</option><option>当座</option></select></div>
+        <div class="form-row"><label>口座番号<span class="req">*</span></label><input placeholder="1234567"></div>
+      </div>
+      <div class="form-row"><label>名義（カナ）<span class="req">*</span></label><input placeholder="カブシキガイシャ ツバサショウカイ"></div>
+      <div class="form-2col">
+        <div class="form-row"><label>並び順</label><input type="number" value="3" style="width:80px"></div>
+        <div class="form-row"><label>有効</label><select><option>有効</option><option>無効</option></select></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeModal('modal-bank')">キャンセル</button>
+      <button class="btn primary" onclick="closeModal('modal-bank'); showToast('振込先口座を追加しました')">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================= -->
+<!-- Modal: Quote PDF Preview -->
+<!-- ========================================= -->
+<div class="modal-mask" id="modal-quote">
+  <div class="modal" style="width:auto; background:#525659">
+    <div class="pdf-toolbar">
+      <span>📄 見積書_OPP-2026-0030.pdf</span>
+      <span class="spacer"></span>
+      <button class="btn small">⬇ ダウンロード</button>
+      <button class="btn small">🖨 印刷</button>
+      <button class="btn small">📧 メール送付</button>
+      <span class="close" style="color:#fff" onclick="closeModal('modal-quote')">✕</span>
+    </div>
+    <div style="background:#525659; padding:8px">
+      <div class="pdf-page">
+        <div class="pdf-title">御 見 積 書</div>
+        <div class="pdf-hdr">
+          <div class="left">
+            株式会社 山田農園 御中<br/>
+            〒577-0000 大阪府東大阪市xxx 4-5-6<br/><br/>
+            <span style="font-size:11px">下記のとおりお見積もり申し上げます。</span>
+          </div>
+          <div class="right">
+            見積No: <b>Q-2026-0030</b><br/>
+            発行日: 2026年5月18日<br/>
+            有効期限: 2026年6月17日<br/><br/>
+            株式会社つばさ商会<br/>
+            〒660-0000 兵庫県尼崎市大島3丁目3-1<br/>
+            TEL: 06-xxxx-xxxx<br/>
+            登録番号: T1234567890123 <span class="pdf-stamp">㊞</span>
+          </div>
+        </div>
+        <div class="pdf-amount-box">
+          <span class="l">お見積金額</span>
+          <span class="v">¥750,000 -</span>
+        </div>
+        <table class="pdf-tbl">
+          <thead><tr><th style="width:35px">#</th><th>商品名</th><th style="width:50px">数量</th><th style="width:80px">単価</th><th style="width:90px">金額</th></tr></thead>
+          <tbody>
+            <tr><td class="num">1</td><td>セーフティプラボード SP-1500 緑</td><td class="num">50</td><td class="num">¥13,000</td><td class="num">¥650,000</td></tr>
+            <tr><td class="num">2</td><td>連結固定金具 J型</td><td class="num">200</td><td class="num">¥350</td><td class="num">¥70,000</td></tr>
+            <tr><td colspan="4" class="num"><b>小計</b></td><td class="num"><b>¥720,000</b></td></tr>
+            <tr><td colspan="4" class="num">送料</td><td class="num">¥35,000</td></tr>
+            <tr><td colspan="4" class="num">値引</td><td class="num">−¥5,000</td></tr>
+            <tr style="background:#fff7d6"><td colspan="4" class="num"><b>合計（税込）</b></td><td class="num"><b>¥750,000</b></td></tr>
+          </tbody>
+        </table>
+        <div class="pdf-bottom">
+          <div><span class="lbl">備考</span>繁忙期前の前倒し納品希望あり。納期5月末まで。</div>
+          <div><span class="lbl">納期</span>2026年5月25日 着</div>
+          <div><span class="lbl">納入場所</span>山田農園 第2圃場（高槻）</div>
+          <div><span class="lbl">支払条件</span>月末締め 翌月末払い 振込</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================= -->
+<!-- Modal: Invoice PDF Preview -->
+<!-- ========================================= -->
+<div class="modal-mask" id="modal-invoice">
+  <div class="modal" style="width:auto; background:#525659">
+    <div class="pdf-toolbar">
+      <span>📄 請求書_INV-2026-0008.pdf</span>
+      <span class="spacer"></span>
+      <button class="btn small">⬇ ダウンロード</button>
+      <button class="btn small">🖨 印刷</button>
+      <button class="btn small">📧 メール送付</button>
+      <span class="close" style="color:#fff" onclick="closeModal('modal-invoice')">✕</span>
+    </div>
+    <div style="background:#525659; padding:8px">
+      <div class="pdf-page">
+        <div class="pdf-title">請 求 書</div>
+        <div class="pdf-hdr">
+          <div class="left">
+            株式会社 山田農園 御中<br/>
+            〒577-0000 大阪府東大阪市xxx 4-5-6<br/>
+            TEL: 06-xxxx-1111<br/><br/>
+            <span style="font-size:11px">下記のとおりご請求申し上げます。</span>
+          </div>
+          <div class="right">
+            請求書No: <b>INV-2026-0008</b><br/>
+            発行日: 2026年3月12日<br/>
+            支払期限: 2026年4月30日<br/><br/>
+            株式会社つばさ商会<br/>
+            〒660-0000 兵庫県尼崎市大島3丁目3-1<br/>
+            TEL: 06-xxxx-xxxx<br/>
+            登録番号: T1234567890123 <span class="pdf-stamp">㊞</span>
+          </div>
+        </div>
+        <div class="pdf-amount-box">
+          <span class="l">ご請求金額</span>
+          <span class="v">¥420,000 -</span>
+        </div>
+        <table class="pdf-tbl">
+          <thead><tr><th style="width:35px">#</th><th>商品名</th><th style="width:50px">数量</th><th style="width:80px">単価</th><th style="width:90px">金額</th></tr></thead>
+          <tbody>
+            <tr><td class="num">1</td><td>セーフティプラボード SP-1500 緑</td><td class="num">30</td><td class="num">¥13,000</td><td class="num">¥390,000</td></tr>
+            <tr><td class="num">2</td><td>連結固定金具 J型</td><td class="num">30</td><td class="num">¥350</td><td class="num">¥10,500</td></tr>
+            <tr><td colspan="4" class="num"><b>小計</b></td><td class="num"><b>¥400,500</b></td></tr>
+            <tr><td colspan="4" class="num">送料</td><td class="num">¥20,000</td></tr>
+            <tr><td colspan="4" class="num">値引</td><td class="num">−¥500</td></tr>
+            <tr style="background:#fff7d6"><td colspan="4" class="num"><b>合計（税込）</b></td><td class="num"><b>¥420,000</b></td></tr>
+          </tbody>
+        </table>
+        <div class="pdf-bottom" style="margin-top:12px">
+          <b>お振込先</b>
+          <table class="pdf-tbl" style="margin-top:4px">
+            <tr><td style="width:80px">口座①</td><td>三井住友銀行 尼崎支店 / 普通 1234567 / カブシキガイシャ ツバサショウカイ</td></tr>
+            <tr><td>口座②</td><td>三菱UFJ銀行 大阪本店 / 普通 7654321 / カブシキガイシャ ツバサショウカイ</td></tr>
+          </table>
+          <div style="margin-top:8px"><span class="lbl">備考</span>恐れ入りますが振込手数料は貴社にてご負担くださいませ。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================= -->
+<!-- Toast -->
+<!-- ========================================= -->
+<div class="toast" id="toast">保存しました</div>
+
+<script>
+// ========== Page routing ==========
+function goto(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const el = document.getElementById(id);
+  if(el) el.classList.add('active');
+  // sync top tab
+  document.querySelectorAll('.app-bar .tab').forEach(t=>t.classList.remove('active'));
+  const map = {
+    'home':'home','lead-list':'lead-list','lead-detail':'lead-list',
+    'account-list':'account-list','account-detail':'account-list',
+    'opp-list':'opp-list','opp-detail':'opp-list',
+    'invoice-list':'invoice-list','invoice-detail':'invoice-list',
+    'bank-list':'bank-list','report-list':'report-list','dash-list':'dash-list'
+  };
+  const tabKey = map[id] || id;
+  document.querySelectorAll('.app-bar .tab').forEach(t=>{
+    if(t.dataset.page===tabKey) t.classList.add('active');
+  });
+  window.scrollTo(0,0);
+}
+
+document.querySelectorAll('[data-page]').forEach(t=>{
+  t.addEventListener('click', ()=>goto(t.dataset.page));
+});
+document.querySelectorAll('[data-go]').forEach(a=>{
+  a.style.cursor='pointer';
+  a.addEventListener('click', e=>{e.preventDefault(); goto(a.dataset.go)});
+});
+
+// ========== Modals ==========
+function openModal(id){ document.getElementById(id).classList.add('show') }
+function closeModal(id){ document.getElementById(id).classList.remove('show') }
+document.querySelectorAll('.modal-mask').forEach(m=>{
+  m.addEventListener('click', e=>{ if(e.target===m) m.classList.remove('show') });
+});
+
+function openNewOpp(){ openModal('modal-new-opp') }
+function openBankModal(){ openModal('modal-bank') }
+function showPdf(kind){ openModal(kind==='quote' ? 'modal-quote' : 'modal-invoice') }
+
+function addLine(){
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><select style="width:100%"><option>セーフティプラボード SP-1500</option><option>セーフティプラボード SP-2000</option><option>連結固定金具 J型</option></select></td>
+    <td class="num"><input type="number" value="1" style="width:80px; text-align:right"></td>
+    <td class="num"><input type="number" value="10000" style="width:100px; text-align:right"></td>
+    <td class="num">¥10,000</td>
+    <td><button class="btn small" onclick="this.closest('tr').remove()">×</button></td>`;
+  document.getElementById('opp-lines').appendChild(tr);
+}
+
+function saveOpp(){
+  closeModal('modal-new-opp');
+  showToast('商談 OPP-2026-0047 を保存しました');
+  setTimeout(()=> showPdf('quote'), 600);
+}
+
+function closeWon(){
+  showToast('🎉 受注（100%）に更新 → 請求書 INV-2026-0030 を自動生成しました');
+  setTimeout(()=> goto('invoice-detail'), 1200);
+}
+
+function markPaid(){
+  showToast('入金済に更新しました');
+}
+
+function convertLead(){
+  showToast('リードを取引先「株式会社 大和フードサービス」に変換しました');
+  setTimeout(()=> goto('account-detail'), 900);
+}
+
+// ========== Toast ==========
+let toastTimer = null;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2200);
+}
+</script>
+</body>
+</html>
