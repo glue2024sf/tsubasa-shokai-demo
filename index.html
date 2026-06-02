@@ -493,6 +493,20 @@ a:hover{text-decoration:underline}
       </table>
     </div>
 
+    <div class="widget span-12">
+      <div class="w-title">🚚 出荷予定リスト（本日以降の出荷予定日・着予定日 ／ 着日入力で自動的に一覧から外れます）</div>
+      <table class="tbl" style="margin-top:6px">
+        <thead><tr>
+          <th>商談</th><th>取引先</th><th>配送先</th><th>出荷予定日</th><th>着予定日</th><th class="num">重量</th><th>運送会社</th><th>状態</th>
+        </tr></thead>
+        <tbody>
+          <tr><td><a class="name-link" data-go="opp-detail">OPP-2026-0030</a></td><td>株式会社 山田農園</td><td>第2圃場（高槻）</td><td>2026/05/24</td><td>2026/05/25</td><td class="num">約770kg</td><td>西濃運輸</td><td><span class="badge info">出荷予定</span></td></tr>
+          <tr><td>OPP-2026-0031</td><td>株式会社 アグリ大阪</td><td>本社倉庫</td><td>2026/05/26</td><td>2026/05/27</td><td class="num">約450kg</td><td>福山通運</td><td><span class="badge info">出荷予定</span></td></tr>
+          <tr><td>OPP-2026-0027</td><td>株式会社 ベジマルシェ</td><td>泉佐野ハウス</td><td>2026/06/09</td><td>2026/06/10</td><td class="num">約300kg</td><td>—</td><td><span class="badge warn">予約（要手配）</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
     <div class="widget span-6">
       <div class="w-title">📥 サンプル送付件数（月次）</div>
       <div class="bar-chart-wrap">
@@ -798,14 +812,14 @@ a:hover{text-decoration:underline}
   </div>
   <table class="tbl">
     <thead><tr>
-      <th>商談番号</th><th>取引先</th><th>フェーズ</th><th>受注日</th><th class="num">金額</th><th>出荷</th><th>入金</th>
+      <th>商談番号</th><th>取引先</th><th>フェーズ</th><th>受注日</th><th class="num">金額</th><th>出荷予定日</th><th>着予定日</th><th>出荷</th><th>入金</th>
     </tr></thead>
     <tbody>
-      <tr><td><a class="name-link" data-go="opp-detail">OPP-2026-0030</a></td><td>株式会社 山田農園</td><td><span class="badge info">見積提示 (60%)</span></td><td>2026/05/25 予定</td><td class="num">¥750,000</td><td>—</td><td>—</td></tr>
-      <tr><td>OPP-2026-0029</td><td>株式会社 アグリ大阪</td><td><span class="badge success">受注 (100%)</span></td><td>2026/05/18</td><td class="num">¥980,000</td><td>出荷済</td><td><span class="badge warn">未入金 (3日)</span></td></tr>
-      <tr><td>OPP-2026-0028</td><td>合同会社 緑風イベント</td><td><span class="badge success">受注 (100%)</span></td><td>2026/03/18</td><td class="num">¥175,000</td><td>出荷済</td><td><span class="badge error">未入金 (64日)</span></td></tr>
-      <tr><td>OPP-2026-0027</td><td>株式会社 ベジマルシェ</td><td><span class="badge warn">サンプル送付 (30%)</span></td><td>2026/06/10 予定</td><td class="num">¥510,000</td><td>—</td><td>—</td></tr>
-      <tr><td>OPP-2026-0026</td><td>(株)サンライズ建材</td><td><span class="badge info">問い合わせ (10%)</span></td><td>2026/06/30 予定</td><td class="num">¥1,250,000</td><td>—</td><td>—</td></tr>
+      <tr><td><a class="name-link" data-go="opp-detail">OPP-2026-0030</a></td><td>株式会社 山田農園</td><td><span class="badge info">見積提示 (60%)</span></td><td>2026/05/25 予定</td><td class="num">¥750,000</td><td>2026/05/24</td><td>2026/05/25</td><td><span class="badge info">出荷予定</span></td><td>—</td></tr>
+      <tr><td>OPP-2026-0029</td><td>株式会社 アグリ大阪</td><td><span class="badge success">受注 (100%)</span></td><td>2026/05/18</td><td class="num">¥980,000</td><td>2026/05/19</td><td>2026/05/20</td><td>出荷済</td><td><span class="badge warn">未入金 (3日)</span></td></tr>
+      <tr><td>OPP-2026-0028</td><td>合同会社 緑風イベント</td><td><span class="badge success">受注 (100%)</span></td><td>2026/03/18</td><td class="num">¥175,000</td><td>2026/03/19</td><td>2026/03/20</td><td>出荷済</td><td><span class="badge error">未入金 (64日)</span></td></tr>
+      <tr><td>OPP-2026-0027</td><td>株式会社 ベジマルシェ</td><td><span class="badge warn">サンプル送付 (30%)</span></td><td>2026/06/10 予定</td><td class="num">¥510,000</td><td>—</td><td>2026/06/10</td><td>—</td><td>—</td></tr>
+      <tr><td>OPP-2026-0026</td><td>(株)サンライズ建材</td><td><span class="badge info">問い合わせ (10%)</span></td><td>2026/06/30 予定</td><td class="num">¥1,250,000</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
     </tbody>
   </table>
 </div>
@@ -827,6 +841,7 @@ a:hover{text-decoration:underline}
       <div class="obj-actions">
         <button class="btn">編集</button>
         <button class="btn" onclick="showPdf('quote')">📄 見積書PDF出力</button>
+        <button class="btn" onclick="showPdf('shipping')">🚚 出荷指示書PDF</button>
         <button class="btn success" onclick="closeWon()">受注（100%）にする</button>
       </div>
     </div>
@@ -844,6 +859,7 @@ a:hover{text-decoration:underline}
     <div class="item"><div class="lbl">金額</div><div class="val">¥750,000</div></div>
     <div class="item"><div class="lbl">取引先</div><div class="val">株式会社 山田農園</div></div>
     <div class="item"><div class="lbl">受注予定日</div><div class="val">2026/05/25</div></div>
+    <div class="item"><div class="lbl">着予定日</div><div class="val">2026/05/25</div></div>
     <div class="item"><div class="lbl">所有者</div><div class="val">山口 啓太</div></div>
   </div>
 
@@ -858,6 +874,7 @@ a:hover{text-decoration:underline}
             <div class="field"><div class="lbl">フェーズ</div><div class="val">3. 見積提示 (60%)</div></div>
             <div class="field"><div class="lbl">取引先</div><div class="val">株式会社 山田農園</div></div>
             <div class="field"><div class="lbl">受注予定日</div><div class="val">2026/05/25</div></div>
+            <div class="field"><div class="lbl">着予定日</div><div class="val">2026/05/25（お客様着希望日）</div></div>
             <div class="field"><div class="lbl">所有者</div><div class="val">山口 啓太</div></div>
             <div class="field"><div class="lbl">配送先</div><div class="val">配送先2: 山田農園 第2圃場（高槻）</div></div>
           </div>
@@ -880,10 +897,16 @@ a:hover{text-decoration:underline}
 
           <div class="sec-title" style="margin:16px -16px 8px">出荷情報</div>
           <div class="field-grid">
-            <div class="field"><div class="lbl">出荷日</div><div class="val">—（未出荷）</div></div>
-            <div class="field"><div class="lbl">運送会社</div><div class="val">—</div></div>
+            <div class="field"><div class="lbl">出荷予定日 <span style="color:var(--text-mute);font-weight:400">（未来日OK）</span></div><div class="val">2026/05/24</div></div>
+            <div class="field"><div class="lbl">出荷日（実績）</div><div class="val">—（未出荷）</div></div>
+            <div class="field"><div class="lbl">着予定日</div><div class="val">2026/05/25</div></div>
+            <div class="field"><div class="lbl">着日（実績）</div><div class="val">—（未着）</div></div>
+            <div class="field"><div class="lbl">運送会社</div><div class="val">西濃運輸（予定）</div></div>
             <div class="field"><div class="lbl">追跡番号</div><div class="val">—</div></div>
+            <div class="field"><div class="lbl">重量</div><div class="val">15kg×50枚 ＋ 金具 ＝ 計 約770kg</div></div>
+            <div class="field"><div class="lbl">出荷ステータス</div><div class="val"><span class="badge info">出荷予定（5/24）</span></div></div>
           </div>
+          <div class="help-text" style="margin-top:6px">💡 出荷予定日・着予定日に未来日を入力すると「出荷予定リスト」に表示され、<b>着日（実績）</b>を入力すると一覧から外れます（＝予約・予定管理）。</div>
 
           <div class="sec-title" style="margin:16px -16px 8px">入金情報</div>
           <div class="field-grid">
@@ -921,6 +944,31 @@ a:hover{text-decoration:underline}
             </div>
             <button class="btn small" onclick="showPdf('quote')">プレビュー</button>
           </div>
+          <div class="help-text" style="border-top:1px dashed var(--border-light); margin-top:6px; padding-top:8px">▼ 受注（100%）にすると下記3帳票が自動生成されます</div>
+          <div style="display:flex; align-items:center; gap:8px; padding:6px 0; opacity:.55">
+            <span style="font-size:18px">🧾</span>
+            <div style="flex:1">
+              <div style="font-weight:700">請求書</div>
+              <div class="help-text">受注時に自動生成</div>
+            </div>
+            <button class="btn small" onclick="showPdf('invoice')">プレビュー</button>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px; padding:6px 0; opacity:.55">
+            <span style="font-size:18px">📦</span>
+            <div style="flex:1">
+              <div style="font-weight:700">納品書</div>
+              <div class="help-text">受注時に自動生成</div>
+            </div>
+            <button class="btn small" onclick="showPdf('delivery')">プレビュー</button>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px; padding:6px 0; opacity:.55">
+            <span style="font-size:18px">🚚</span>
+            <div style="flex:1">
+              <div style="font-weight:700">出荷指示書</div>
+              <div class="help-text">受注時に自動生成</div>
+            </div>
+            <button class="btn small" onclick="showPdf('shipping')">プレビュー</button>
+          </div>
         </div>
       </div>
 
@@ -955,7 +1003,8 @@ a:hover{text-decoration:underline}
       <div class="related-card">
         <div class="related-head">💡 自動化（Flow）</div>
         <div style="padding:12px 16px; font-size:12px; color:var(--text-2)">
-          ✅ フェーズ「受注 (100%)」に更新すると、<a>請求書レコードが自動生成</a>されます<br/>
+          ✅ フェーズ「受注 (100%)」に更新すると、<a>請求書・納品書・出荷指示書の3帳票が自動生成</a>されます<br/>
+          🚚 出荷予定日・着予定日が未来日の商談は「出荷予定リスト」に表示<br/>
           📅 日次スケジュールFlowで未入金60日経過時にアラート
         </div>
       </div>
@@ -1141,6 +1190,16 @@ a:hover{text-decoration:underline}
   </div>
 
   <div class="card">
+    <div class="card-head">出荷・物流向け</div>
+    <table class="tbl">
+      <tr><td>🚚 出荷予定リスト（本日以降の出荷予定日）</td><td>出荷 / Opportunity</td><td>2026/05/22</td></tr>
+      <tr><td>🚚 着予定リスト（本日以降の着予定日）</td><td>出荷 / Opportunity</td><td>2026/05/22</td></tr>
+      <tr><td>📦 未出荷の受注一覧（受注100%・出荷日未入力）</td><td>出荷 / Opportunity</td><td>2026/05/22</td></tr>
+    </table>
+    <div class="help-text" style="padding:0 12px 10px">※ 着日（実績）を入力すると着予定リストから自動的に外れます（予約・予定管理）。</div>
+  </div>
+
+  <div class="card">
     <div class="card-head">事務向け</div>
     <table class="tbl">
       <tr><td>📊 今月入金一覧</td><td>入金 / Opportunity</td><td>2026/05/21</td></tr>
@@ -1250,6 +1309,14 @@ a:hover{text-decoration:underline}
         <div class="form-row">
           <label>受注予定日<span class="req">*</span></label>
           <input type="date" value="2026-05-30">
+        </div>
+        <div class="form-row">
+          <label>着予定日（お客様着希望日）</label>
+          <input type="date" value="2026-06-02">
+        </div>
+        <div class="form-row">
+          <label>出荷予定日（未来日OK）</label>
+          <input type="date" value="2026-06-01">
         </div>
         <div class="form-row">
           <label>フェーズ<span class="req">*</span></label>
@@ -1456,6 +1523,117 @@ a:hover{text-decoration:underline}
 </div>
 
 <!-- ========================================= -->
+<!-- Modal: 納品書 PDF Preview -->
+<!-- ========================================= -->
+<div class="modal-mask" id="modal-delivery">
+  <div class="modal" style="width:auto; background:#525659">
+    <div class="pdf-toolbar">
+      <span>📦 納品書_OPP-2026-0030.pdf</span>
+      <span class="spacer"></span>
+      <button class="btn small">⬇ ダウンロード</button>
+      <button class="btn small">🖨 印刷</button>
+      <button class="btn small">📧 メール送付</button>
+      <span class="close" style="color:#fff" onclick="closeModal('modal-delivery')">✕</span>
+    </div>
+    <div style="background:#525659; padding:8px">
+      <div class="pdf-page">
+        <div class="pdf-title">納 品 書</div>
+        <div class="pdf-hdr">
+          <div class="left">
+            株式会社 山田農園 御中<br/>
+            〒569-0000 大阪府高槻市xxx 1-2<br/>
+            （納品先：山田農園 第2圃場）<br/><br/>
+            <span style="font-size:11px">下記のとおり納品いたしました。</span>
+          </div>
+          <div class="right">
+            納品書No: <b>DN-2026-0030</b><br/>
+            納品日: 2026年5月25日<br/>
+            出荷日: 2026年5月24日<br/><br/>
+            株式会社つばさ商会<br/>
+            〒660-0000 兵庫県尼崎市大島3丁目3-1<br/>
+            TEL: 06-xxxx-xxxx<br/>
+            登録番号: T1234567890123 <span class="pdf-stamp">㊞</span>
+          </div>
+        </div>
+        <div class="pdf-amount-box">
+          <span class="l">納品金額（税込）</span>
+          <span class="v">¥750,000 -</span>
+        </div>
+        <table class="pdf-tbl">
+          <thead><tr><th style="width:35px">#</th><th>商品名</th><th style="width:50px">数量</th><th style="width:80px">単価</th><th style="width:90px">金額</th></tr></thead>
+          <tbody>
+            <tr><td class="num">1</td><td>セーフティプラボード SP-1500 緑</td><td class="num">50</td><td class="num">¥13,000</td><td class="num">¥650,000</td></tr>
+            <tr><td class="num">2</td><td>連結固定金具 J型</td><td class="num">200</td><td class="num">¥350</td><td class="num">¥70,000</td></tr>
+            <tr><td colspan="4" class="num"><b>小計</b></td><td class="num"><b>¥720,000</b></td></tr>
+            <tr><td colspan="4" class="num">送料</td><td class="num">¥35,000</td></tr>
+            <tr><td colspan="4" class="num">値引</td><td class="num">−¥5,000</td></tr>
+            <tr style="background:#fff7d6"><td colspan="4" class="num"><b>合計（税込）</b></td><td class="num"><b>¥750,000</b></td></tr>
+          </tbody>
+        </table>
+        <div class="pdf-bottom">
+          <div><span class="lbl">出荷日 / 着予定日</span>2026年5月24日 出荷 ／ 2026年5月25日 着</div>
+          <div><span class="lbl">運送会社</span>西濃運輸</div>
+          <div><span class="lbl">総重量</span>約770kg（15kg×50枚 ＋ 金具）</div>
+          <div><span class="lbl">備考</span>繁忙期前の前倒し納品希望あり。検収のうえ受領印をお願いいたします。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================= -->
+<!-- Modal: 出荷指示書 PDF Preview -->
+<!-- ========================================= -->
+<div class="modal-mask" id="modal-shipping">
+  <div class="modal" style="width:auto; background:#525659">
+    <div class="pdf-toolbar">
+      <span>🚚 出荷指示書_OPP-2026-0030.pdf</span>
+      <span class="spacer"></span>
+      <button class="btn small">⬇ ダウンロード</button>
+      <button class="btn small">🖨 印刷</button>
+      <button class="btn small">📧 メール送付</button>
+      <span class="close" style="color:#fff" onclick="closeModal('modal-shipping')">✕</span>
+    </div>
+    <div style="background:#525659; padding:8px">
+      <div class="pdf-page">
+        <div class="pdf-title">出 荷 指 示 書</div>
+        <div class="pdf-hdr">
+          <div class="left">
+            <span style="font-size:11px">下記のとおり出荷をお願いいたします。</span>
+          </div>
+          <div class="right">
+            出荷指示No: <b>SH-2026-0030</b><br/>
+            発行日: 2026年5月22日<br/>
+            商談No: OPP-2026-0030<br/><br/>
+            株式会社つばさ商会
+          </div>
+        </div>
+        <table class="pdf-tbl" style="margin-top:4px">
+          <tr><td style="width:120px; background:#f3f3f3"><b>配送先名</b></td><td>山田農園 第2圃場</td></tr>
+          <tr><td style="background:#f3f3f3"><b>郵便番号・住所</b></td><td>〒569-0000 大阪府高槻市xxx 1-2</td></tr>
+          <tr><td style="background:#f3f3f3"><b>電話番号</b></td><td>072-xxx-xxxx</td></tr>
+        </table>
+        <table class="pdf-tbl" style="margin-top:10px">
+          <thead><tr><th>商品名</th><th style="width:70px">数量</th><th style="width:130px">重量</th></tr></thead>
+          <tbody>
+            <tr><td>セーフティプラボード SP-1500 緑</td><td class="num">50枚</td><td class="num">15kg×50枚 ＝ 750kg</td></tr>
+            <tr><td>連結固定金具 J型</td><td class="num">200</td><td class="num">約20kg</td></tr>
+            <tr style="background:#fff7d6"><td class="num"><b>合計重量</b></td><td class="num"><b>—</b></td><td class="num"><b>約770kg</b></td></tr>
+          </tbody>
+        </table>
+        <table class="pdf-tbl" style="margin-top:10px">
+          <tr><td style="width:120px; background:#f3f3f3"><b>出荷日</b></td><td>2026年5月24日</td><td style="width:90px; background:#f3f3f3"><b>到着日</b></td><td>2026年5月25日</td></tr>
+          <tr><td style="background:#f3f3f3"><b>運送会社</b></td><td>西濃運輸</td><td style="background:#f3f3f3"><b>追跡番号</b></td><td>（出荷後に入力）</td></tr>
+        </table>
+        <div class="pdf-bottom" style="margin-top:10px">
+          <div><span class="lbl">備考</span>送り状に商談No（OPP-2026-0030）を記載してください。第2圃場は午前着希望。パレット積み・雨濡れ厳禁。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================= -->
 <!-- Toast -->
 <!-- ========================================= -->
 <div class="toast" id="toast">保存しました</div>
@@ -1499,7 +1677,10 @@ document.querySelectorAll('.modal-mask').forEach(m=>{
 
 function openNewOpp(){ openModal('modal-new-opp') }
 function openBankModal(){ openModal('modal-bank') }
-function showPdf(kind){ openModal(kind==='quote' ? 'modal-quote' : 'modal-invoice') }
+function showPdf(kind){
+  const map = { quote:'modal-quote', invoice:'modal-invoice', delivery:'modal-delivery', shipping:'modal-shipping' };
+  openModal(map[kind] || 'modal-quote');
+}
 
 function addLine(){
   const tr = document.createElement('tr');
@@ -1519,8 +1700,8 @@ function saveOpp(){
 }
 
 function closeWon(){
-  showToast('🎉 受注（100%）に更新 → 請求書 INV-2026-0030 を自動生成しました');
-  setTimeout(()=> goto('invoice-detail'), 1200);
+  showToast('🎉 受注（100%）に更新 → 請求書・納品書・出荷指示書の3帳票を自動生成しました');
+  setTimeout(()=> goto('invoice-detail'), 1400);
 }
 
 function markPaid(){
